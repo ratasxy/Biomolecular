@@ -11,8 +11,8 @@ $utils = new Utils();
 //echo "Ingrese secuencia B: ";
 //$sequenceB = $line = trim(fgets(STDIN));
 
-$sequenceA = 'PAWHEAE';
-$sequenceB = 'HEAGAWGHEE';
+$sequenceA = 'AGCT';
+$sequenceB = 'GCA';
 
 echo "\nEjecutando algoritmo: \n";
 
