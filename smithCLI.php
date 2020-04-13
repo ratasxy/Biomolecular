@@ -6,13 +6,13 @@ require 'Utils.php';
 $smith = new Smith();
 $utils = new Utils();
 
-//echo "Ingrese secuencia A: ";
-//$sequenceA = $line = trim(fgets(STDIN));
-//echo "Ingrese secuencia B: ";
-//$sequenceB = $line = trim(fgets(STDIN));
+echo "Ingrese secuencia A: ";
+$sequenceA = $line = trim(fgets(STDIN));
+echo "Ingrese secuencia B: ";
+$sequenceB = $line = trim(fgets(STDIN));
 
-$sequenceA = 'HEAGAWGHEE';
-$sequenceB = 'PAWHEAE';
+//$sequenceA = 'HEAGAWGHEE';
+//$sequenceB = 'PAWHEAE';
 
 echo "\nEjecutando algoritmo: \n";
 
