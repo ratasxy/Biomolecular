@@ -1,6 +1,6 @@
 <?php
 
-class Needleman{
+class Smith{
     public $matrix;
     private $sequenceA;
     private $sizeA;
@@ -28,13 +28,13 @@ class Needleman{
         $this->matrix[$this->sizeA][$this->sizeB];
 
         for($i = 0; $i < $this->sizeA; $i++) {
-            $this->matrix[$i][0]['value'] = -2 * $i;
-            $this->matrix[$i][0]['pointer'] = array(self::$up);
+            $this->matrix[$i][0]['value'] = 0;
+            $this->matrix[$i][0]['pointer'] = array();
         }
 
         for($j = 0; $j < $this->sizeB; $j++) {
-            $this->matrix[0][$j]['value'] = -2 * $j;
-            $this->matrix[0][$j]['pointer'] = array(self::$left);
+            $this->matrix[0][$j]['value'] = 0;
+            $this->matrix[0][$j]['pointer'] = array();
         }
 
         $this->matrix[0][0]['pointer'] = array("");
@@ -45,8 +45,9 @@ class Needleman{
                 $match = $this->matrix[$i - 1][$j - 1]['value'] + $matchOrMismatch;
                 $agap = $this->matrix[$i - 1][$j]['value'] + -2;
                 $bgap = $this->matrix[$i][$j - 1]['value'] + -2;
+                $zero = 0;
 
-                $max = max($match, $agap, $bgap);
+                $max = max($match, $agap, $bgap, $zero);
 
                 $pointer = array(self::$nortWest);
 
@@ -81,17 +82,52 @@ class Needleman{
                 }
 
                 $this->matrix[$i][$j]['value'] = $max;
-                $this->matrix[$i][$j]['pointer'] = $pointer;
+                if($max == 0)
+                    $this->matrix[$i][$j]['pointer'] = array();
+                else
+                    $this->matrix[$i][$j]['pointer'] = $pointer;
             }
         }
     }
 
+    public function getMax(){
+        $max = 0;
+
+        for($i = 1; $i < $this->sizeA; $i++) {
+            for ($j = 1; $j < $this->sizeB; $j++) {
+                if($this->matrix[$i][$j]['value'] > $max)
+                    $max = $this->matrix[$i][$j]['value'];
+            }
+        }
+
+        echo "El valor maximo es: $max\n";
+
+        $maxList = array();
+
+        for($i = 1; $i < $this->sizeA; $i++) {
+            for ($j = 1; $j < $this->sizeB; $j++) {
+                if($this->matrix[$i][$j]['value'] == $max)
+                    $maxList[] = array($i, $j);
+            }
+        }
+
+        return $maxList;
+
+    }
+
 
     public function trace($i=-1, $j=-1){
-        $i = $this->sizeA - 1;
-        $j = $this->sizeB - 1;
+        $maxList = $this->getMax();
 
-        return $this->makeTrace($i, $j);
+        $allTrace = array();
+
+        foreach ($maxList as $oneMax)
+        {
+            echo "Obteniendo trace de " . $oneMax[0] . " - " . $oneMax[1] . "\n";
+            $allTrace = array_merge($allTrace, $this->makeTrace($oneMax[0], $oneMax[1]));
+        }
+
+        return $allTrace;
     }
 
     public function test($b, $c1, $c2){
@@ -107,7 +143,7 @@ class Needleman{
     public function makeTrace($i, $j){
         $pointers = $this->matrix[$i][$j]['pointer'];
 
-        if($i == 0 && $j == 0){
+        if($pointers == array()){
             return array(array(
                 "A" => "",
                 "B" => ""

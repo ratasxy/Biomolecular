@@ -1,26 +1,22 @@
 <?php
 
 require 'Needleman.php';
+require 'Utils.php';
 
 $needleman = new Needleman();
+$utils = new Utils();
 
 //echo "Ingrese secuencia A: ";
 //$sequenceA = $line = trim(fgets(STDIN));
 //echo "Ingrese secuencia B: ";
 //$sequenceB = $line = trim(fgets(STDIN));
 
-$sequenceA = 'ACTGATTCA';
-$sequenceB = 'ACGCATCA';
+$sequenceA = 'ATG';
+$sequenceB = 'TTATGG';
 
 echo "\nEjecutando algoritmo: \n";
 
-$needleman->setSequences($sequenceB, $sequenceA);
+$needleman->setSequences($sequenceA, $sequenceB);
 $needleman->compute();
-$needleman->printMatrix();
+$utils->createFile($sequenceA, $sequenceB, 'matrix-needleman', $needleman->printMatrix());
 print_r($needleman->trace());
-
-//$ans = $needleman->getTrace();
-
-echo "\n\nUna de las cadenas con mejor score es:\n";
-echo "Secuencia A: " . $ans["A"] . "\n";
-echo "Secuencia B: " . $ans["B"] . "\n";
