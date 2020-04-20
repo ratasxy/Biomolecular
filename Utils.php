@@ -19,6 +19,20 @@ class Utils{
         echo " HECHO\n";
     }
 
+    public function createFileStar($name, $suffix, $data){
+        echo "Guardando archivo...";
+        if(!file_exists(__DIR__ . '/output'))
+            mkdir(__DIR__ . '/output');
+
+        if(!file_exists(__DIR__ . "/output/$name"))
+            mkdir(__DIR__ . "/output/$name");
+
+        $filename = __DIR__ . "/output/$name/$suffix.txt";
+
+        file_put_contents($filename, $data);
+        echo " HECHO\n";
+    }
+
     public function resultsToText($data){
         $ans = "";
         foreach ($data as $d){

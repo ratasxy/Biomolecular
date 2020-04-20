@@ -2,15 +2,16 @@
 
 require 'Star.php';
 
+$name = "2";
 $sequences = array(
-    'TTAGCATCG',
-    'TAGCTCCCGAT',
-    'TTTCGATCGTA',
-    'TGGCATGCTAG',
-    'TTGCTA'
+    "ATTGCCATT",
+    "ATGGCCATT",
+    "ATCCAATTTT",
+    "ATCTTCTT",
+    "ACTGACC"
 );
 
 $star = new Star();
 $star->setSequences($sequences);
-$star->calcule();
+$star->calcule($name);
 

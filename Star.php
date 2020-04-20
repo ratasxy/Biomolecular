@@ -7,12 +7,18 @@ class Star {
     private $sequences;
     private $matrix;
     private $answers;
+    private $pivot;
 
     public function setSequences($sequences){
         $this->sequences = $sequences;
 
         $this->matrix = array();
         $this->answers = array();
+    }
+
+    public function getPivot()
+    {
+        return $this->pivot;
     }
 
     public function calculeMatrix(){
@@ -42,6 +48,37 @@ class Star {
 
     }
 
+    public function matrixToText()
+    {
+        $answer = "";
+        $size = count($this->sequences);
+
+        for ($i = 0; $i < $size; $i++) {
+            for ($j = 0; $j < $size; $j++) {
+                $answer .= $this->matrix[$i][$j] . "\t";
+            }
+            $answer .= "\n";
+        }
+
+        return $answer;
+    }
+
+    public function sumsToText(){
+        $ans = "";
+
+        $size = count($this->sequences);
+
+        for ($i = 0; $i < $size; $i++) {
+            $current = 0;
+            for ($j = 0; $j < $size; $j++) {
+                $current += $this->matrix[$i][$j];
+            }
+            $ans .= $current . "\t";
+        }
+
+        return $ans;
+    }
+
     public function calculeMaxLine()
     {
         $line = -1;
@@ -68,6 +105,7 @@ class Star {
     public function align()
     {
         $pivot = $this->calculeMaxLine();
+        $this->pivot = $pivot;
 
         $size = count($this->sequences);
 
@@ -90,7 +128,23 @@ class Star {
         }
 
         $answer = $this->normalizeGap($answer);
-        echo $this->formatAlign($answer);
+        return $this->formatAlign($answer);
+    }
+
+    public function textAlignments()
+    {
+        $ans = "";
+        $size = count($this->sequences);
+
+        for ($i = 0; $i<$size; $i++)
+        {
+            $ans .= "=====================$this->pivot----$i=====================\n";
+            $ans .= "A: " . $this->answers[$this->pivot][$i]["A"] . "\n";
+            $ans .= "B: " . $this->answers[$this->pivot][$i]["B"] . "\n";
+            $ans .= "\n";
+        }
+
+        return $ans;
     }
 
     public function normalizeGap($align){
@@ -132,10 +186,22 @@ class Star {
         return $ans;
     }
 
-    public function calcule()
+    public function calcule($name)
     {
+        $utils = new Utils();
         $this->calculeMatrix();
-        $this->align();
+        $answer = $this->align();
+        $data = $this->matrixToText();
+        $data .= "-------------------------------------\n";
+        $data .= $this->sumsToText() . "  ==== PIVOT: S" . ($this->pivot+1) . "\n";
+
+        $utils->createFileStar($name, 'matrix', $data);
+
+        $aligns = $this->textAlignments();
+        $utils->createFileStar($name, 'aligns', $aligns);
+
+
+        $utils->createFileStar($name, 'answer', $answer);
 
     }
 }
