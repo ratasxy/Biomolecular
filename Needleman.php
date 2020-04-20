@@ -94,6 +94,13 @@ class Needleman{
         return $this->makeTrace($i, $j);
     }
 
+    public function getScore(){
+        $i = $this->sizeA - 1;
+        $j = $this->sizeB - 1;
+
+        return $this->matrix[$i][$j]['value'];
+    }
+
     public function test($b, $c1, $c2){
         foreach ($b as $key => $a){
             $a['A'] = $a['A'] . $c1;
