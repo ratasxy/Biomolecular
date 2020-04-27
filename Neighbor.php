@@ -5,6 +5,7 @@ require_once 'Utils.php';
 class Neighbor {
     private $distances;
     private $sumMatrix;
+    private $answer;
 
     public function __construct($distances)
     {
@@ -15,14 +16,25 @@ class Neighbor {
 
         $txtDistances = "";
         $txtQs = "";
+        $u = 0;
+
+        $c = count($this->distances);
+        for($i=0;$i<$c;$i++){
+            $this->answer[] = chr(65 + $i);
+        }
 
         while(count($this->distances) > 2){
             $q = $this->calculateQ();
             $txtDistances .= "\n------------\n" . $this->printMatrix($this->distances) . "\n------------\n";
             $txtQs .= "\n------------\n" . $this->printMatrix($q) . "\n------------\n";
             $union = $this->getUnionNodes($q);
-            echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
+            //echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
+            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forman: U$u" . "\n";
+            delete_row($this->answer, $union["f"]);
+            delete_row($this->answer, $union["g"]-1);
+            array_unshift($this->answer, "U$u");
             $this->getNewDistances($union["f"], $union["g"]);
+            $u++;
         }
         return ["ds" => $txtDistances, "qs" => $txtQs];
     }
@@ -56,7 +68,7 @@ class Neighbor {
                 $answer = $utils->getBest($answer);
 
                 $d = $this->calculeDist($answer);
-                $d = floor($d * 100);
+                $d = round($d * 100, 2);
                 $distances[$i][$j] = $d;
                 $distances[$j][$i] = $d;
             }
@@ -151,7 +163,7 @@ class Neighbor {
 
         for($j=1;$j<$newn;$j++){
             $i = $keys[$j-1];
-            $t = ($distances[$f][$i] + $distances[$g][$i] - $distances[$f][$g])/2;
+            $t = round(($distances[$f][$i] + $distances[$g][$i] - $distances[$f][$g])/2,2);
             $nDistances[0][$j] = $t;
             $nDistances[$j][0] = $t;
         }
