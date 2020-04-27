@@ -3,7 +3,7 @@
 require 'Utils.php';
 require 'Neighbor.php';
 
-$filename = "distances.in";
+$filename = "distancia.txt";
 
 $utils = new Utils();
 $distances = $utils->readFile($filename);

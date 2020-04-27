@@ -56,6 +56,7 @@ class Neighbor {
                 $answer = $utils->getBest($answer);
 
                 $d = $this->calculeDist($answer);
+                $d = floor($d * 100);
                 $distances[$i][$j] = $d;
                 $distances[$j][$i] = $d;
             }

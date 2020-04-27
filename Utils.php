@@ -20,7 +20,7 @@ class Utils{
     }
 
     public function readFile($fileName){
-        $data = file($fileName, FILE_IGNORE_NEW_LINES);
+        $data = file("in/" . $fileName, FILE_IGNORE_NEW_LINES);
 
         $array = array();
 
