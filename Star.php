@@ -30,14 +30,17 @@ class Star {
             $this->answers[$i] = array();
             $this->matrix[$i] = array();
 
-            for ($j = 0; $j < $size; $j++) {
+            for ($j = $i; $j < $size; $j++) {
+                echo "calculando $i - $j...\n";
                 $needleman = new Needleman();
                 $needleman->setSequences($this->sequences[$i], $this->sequences[$j]);
                 $needleman->compute();
 
                 $this->matrix[$i][$j] = $needleman->getScore();
+                $this->matrix[$j][$i] = $needleman->getScore();
                 $answer = $needleman->trace();
                 $this->answers[$i][$j] = $utils->getBest($answer);
+                $this->answers[$j][$i] = $utils->getBest($answer);
 
 
                 if ($i == $j) {

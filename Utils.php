@@ -19,6 +19,23 @@ class Utils{
         echo " HECHO\n";
     }
 
+    public function readFile($fileName){
+        $data = file($fileName, FILE_IGNORE_NEW_LINES);
+
+        $array = array();
+
+        foreach ($data as $line){
+            $larray = preg_split('/\s+/', $line);
+            foreach($larray as $key => $datum){
+                $larray[$key] = (float) $datum;
+            }
+
+            $array[] = $larray;
+        }
+
+        return $array;
+    }
+
     public function createFileStar($name, $suffix, $data){
         echo "Guardando archivo...";
         if(!file_exists(__DIR__ . '/output'))
