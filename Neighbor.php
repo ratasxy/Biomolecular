@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Needleman.php';
+require_once 'Utils.php';
 class Neighbor {
     private $distances;
     private $sumMatrix;
@@ -11,13 +13,86 @@ class Neighbor {
 
     public function run(){
 
+        $txtDistances = "";
+        $txtQs = "";
+
         while(count($this->distances) > 2){
             $q = $this->calculateQ();
-            echo "\n------------\n" . $this->printMatrix($q) . "\n------------\n";
+            $txtDistances .= "\n------------\n" . $this->printMatrix($this->distances) . "\n------------\n";
+            $txtQs .= "\n------------\n" . $this->printMatrix($q) . "\n------------\n";
             $union = $this->getUnionNodes($q);
+            echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
             $this->getNewDistances($union["f"], $union["g"]);
         }
+        return ["ds" => $txtDistances, "qs" => $txtQs];
+    }
 
+    public function distanceFromSequences($sequences){
+        $utils = new Utils();
+
+        $size = count($sequences);
+        $score = array();
+        $answer = array();
+        $distances = array();
+
+        for ($i = 0; $i < $size; $i++) {
+            $answer[$i] = array();
+            $score[$i] = array();
+            $distances[$i] = array();
+
+            for ($j = $i; $j < $size; $j++) {
+                if ($i == $j) {
+                    $score[$i][$j] = 0;
+                    $distances[$i][$j] = 0;
+                }
+                echo "calculando $i - $j...\n";
+                $needleman = new Needleman();
+                $needleman->setSequences($sequences[$i], $sequences[$j]);
+                $needleman->compute();
+
+                $score[$i][$j] = $needleman->getScore();
+                $score[$j][$i] = $needleman->getScore();
+                $answer = $needleman->trace();
+                $answer = $utils->getBest($answer);
+
+                $d = $this->calculeDist($answer);
+                $distances[$i][$j] = $d;
+                $distances[$j][$i] = $d;
+            }
+        }
+
+        for ($i = 0; $i < $size; $i++) {
+            for ($j = $i; $j < $size; $j++) {
+                $distances[$j][$i] = $distances[$i][$j];
+            }
+        }
+
+        //var_dump($distances);
+        echo "------------------\n" . $this->printMatrix($distances) . "------------------\n";
+        $this->distances = $distances;
+    }
+
+    public function calculeDist($answer){
+        $a = $answer["A"];
+        $b = $answer["B"];
+        $n = strlen($a);
+
+        $numerator = 0;
+        $denumer = 0;
+
+        for($i = 0; $i<$n; $i++){
+            if($a[$i] == "-" || $b[$i] == "-"){
+                if($a[$i] == "-" && $b[$i] == "-"){
+                    echo "Doble gap\n";
+                }else{
+                    $numerator++;
+                }
+            }else{
+                $denumer++;
+            }
+        }
+
+        return ((float) $numerator / (float) $denumer);
     }
 
     public function getNewDistances($f, $g){
@@ -30,7 +105,7 @@ class Neighbor {
 
         $dgu = $distances[$f][$g] - $dfu;
 
-        echo "$sumMatrix[$f] -- $sumMatrix[$g] ---> $f -- $g ---> $dfu -- $dgu\n";
+        //echo "$sumMatrix[$f] -- $sumMatrix[$g] ---> $f -- $g ---> $dfu -- $dgu\n";
 
         $newn = $n-1;
 
@@ -64,14 +139,14 @@ class Neighbor {
             }
         }
 
-        for($i=0;$i<$n;$i++)
-        {
-            $t = ($distances[$f][$i] + $distances[$g][$i] - $distances[$f][$g])/2;
-            echo    "$t\t";
-        }
-        echo "\n";
+//        for($i=0;$i<$n;$i++)
+//        {
+//            $t = ($distances[$f][$i] + $distances[$g][$i] - $distances[$f][$g])/2;
+//            echo    "$t\t";
+//        }
+//        echo "\n";
 
-        var_dump($keys);
+        //var_dump($keys);
 
         for($j=1;$j<$newn;$j++){
             $i = $keys[$j-1];
@@ -104,10 +179,9 @@ class Neighbor {
 //        }
 
         //echo $this->printMatrix($tmp);
-        echo "\n------------------\n";
-        echo $this->printMatrix($nDistances);
+        //echo "\n------------------\n";
+        //echo $this->printMatrix($nDistances);
         $this->distances = $nDistances;
-        die();
     }
 
     public function printMatrix($matrix){

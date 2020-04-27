@@ -3,10 +3,13 @@
 require 'Utils.php';
 require 'Neighbor.php';
 
-$filename = "distances4.in";
+$filename = "distances.in";
 
 $utils = new Utils();
 $distances = $utils->readFile($filename);
 
 $neighbor = new Neighbor($distances);
-$neighbor->run();
+$ans = $neighbor->run();
+
+$utils->createFileStar($filename, "distances", $ans["ds"]);
+$utils->createFileStar($filename, "qs", $ans["qs"]);
