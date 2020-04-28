@@ -29,7 +29,7 @@ class Neighbor {
             $txtQs .= "\n------------\n" . $this->printMatrix($q) . "\n------------\n";
             $union = $this->getUnionNodes($q);
             //echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
-            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forman: U$u" . "\n";
+            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: U$u" . "\n";
             delete_row($this->answer, $union["f"]);
             delete_row($this->answer, $union["g"]-1);
             array_unshift($this->answer, "U$u");
