@@ -29,13 +29,16 @@ class Neighbor {
             $txtQs .= "\n------------\n" . $this->printMatrix($q) . "\n------------\n";
             $union = $this->getUnionNodes($q);
             //echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
-            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: U$u" . "\n";
+            $dep = $this->answer[$union["f"]] . $this->answer[$union["g"]];
+            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: $dep" . "\n";
             delete_row($this->answer, $union["f"]);
             delete_row($this->answer, $union["g"]-1);
-            array_unshift($this->answer, "U$u");
+            //array_unshift($this->answer, "U$u");
+            array_unshift($this->answer, "$dep");
             $this->getNewDistances($union["f"], $union["g"]);
             $u++;
         }
+        echo "El ordenamiento optimo es: " . implode("", array_reverse($this->answer)) . "\n";
         return ["ds" => $txtDistances, "qs" => $txtQs];
     }
 
@@ -226,7 +229,9 @@ class Neighbor {
                     $q[$i][$j] = "-";
                     continue;
                 }
-                $calc = (($n - 2) * $distances[$i][$j]) - $sumMatrix[$i] - $sumMatrix[$j];
+                //echo "(($n - 2) * $distances[$i][$j]) - $sumMatrix[$i] - $sumMatrix[$j]\n";
+                $calc = round($distances[$i][$j] - ((1/($n-2))/($sumMatrix[$i] + $sumMatrix[$j])),2);
+                //$calc = (($n - 2) * $distances[$i][$j]) - $sumMatrix[$i] - $sumMatrix[$j];
                 $q[$i][$j] = $calc;
             }
         }
