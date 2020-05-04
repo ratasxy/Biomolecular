@@ -94,6 +94,13 @@ class Needleman{
         return $this->makeTrace($i, $j);
     }
 
+    public function traceUnique($i=-1, $j=-1){
+        $i = $this->sizeA - 1;
+        $j = $this->sizeB - 1;
+
+        return $this->makeTraceUnique($i, $j);
+    }
+
     public function getScore(){
         $i = $this->sizeA - 1;
         $j = $this->sizeB - 1;
@@ -108,6 +115,13 @@ class Needleman{
 
             $b[$key] = $a;
         }
+        return $b;
+    }
+
+    public function testUnique($b, $c1, $c2){
+        $b['A'] = $b['A'] . $c1;
+        $b['B'] = $b['B'] . $c2;
+
         return $b;
     }
 
@@ -141,6 +155,36 @@ class Needleman{
         }
 
         return $ans;
+
+    }
+
+    public function makeTraceUnique($i, $j){
+        $pointers = $this->matrix[$i][$j]['pointer'];
+
+        if($i == 0 && $j == 0){
+            return array(
+                "A" => "",
+                "B" => ""
+            );
+        }
+
+        $ans = array();
+        $a = array();
+        $pointer = $pointers[0];
+        if ($pointer === self::$nortWest) {
+            $a = $this->makeTraceUnique($i-1, $j-1);
+            $a = $this->testUnique($a, $this->sequenceA[$i-1], $this->sequenceB[$j-1]);
+        } elseif ($pointer === self::$up) {
+            $a = $this->makeTraceUnique($i-1, $j);
+            $a = $this->testUnique($a, $this->sequenceA[$i-1], "-");
+        } else {
+            $a = $this->makeTraceUnique($i, $j-1);
+            $a = $this->testUnique($a, "-", $this->sequenceB[$j-1]);
+        }
+
+        //print_r($ans);
+
+        return $a;
 
     }
 

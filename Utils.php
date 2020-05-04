@@ -24,10 +24,13 @@ class Utils{
 
         $array = array();
 
-        foreach ($data as $line){
+        foreach ($data as $keyj => $line){
             $larray = preg_split('/\s+/', $line);
             foreach($larray as $key => $datum){
-                $larray[$key] = (float) $datum;
+                if($keyj == $key)
+                    $larray[$keyj] = "-";
+                else
+                    $larray[$key] = (float) $datum;
             }
 
             $array[] = $larray;

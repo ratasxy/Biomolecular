@@ -16,6 +16,7 @@ class Neighbor {
 
         $txtDistances = "";
         $txtQs = "";
+        $txtAns = "";
         $u = 0;
 
         $c = count($this->distances);
@@ -30,7 +31,7 @@ class Neighbor {
             $union = $this->getUnionNodes($q);
             //echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
             $dep = $this->answer[$union["f"]] . $this->answer[$union["g"]];
-            echo "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: $dep" . "\n";
+            $txtAns .= "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: $dep" . "\n";
             delete_row($this->answer, $union["f"]);
             delete_row($this->answer, $union["g"]-1);
             //array_unshift($this->answer, "U$u");
@@ -38,7 +39,9 @@ class Neighbor {
             $this->getNewDistances($union["f"], $union["g"]);
             $u++;
         }
-        echo "El ordenamiento optimo es: " . implode("", array_reverse($this->answer)) . "\n";
+
+        $txtAns .= "El ordenamiento optimo es: " . implode("", array_reverse($this->answer)) . "\n";
+        $txtDistances .= "\n---------------Resultado----------\n" . $txtAns;
         return ["ds" => $txtDistances, "qs" => $txtQs];
     }
 
@@ -67,8 +70,9 @@ class Neighbor {
 
                 $score[$i][$j] = $needleman->getScore();
                 $score[$j][$i] = $needleman->getScore();
-                $answer = $needleman->trace();
-                $answer = $utils->getBest($answer);
+                $answer = $needleman->traceUnique();
+                //var_dump($answer);
+                //$answer = $utils->getBest($answer);
 
                 $d = $this->calculeDist($answer);
                 $d = round($d * 100, 2);
