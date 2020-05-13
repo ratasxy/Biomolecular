@@ -255,11 +255,7 @@ class Cluster {
                 $p += $this->dsCopy[$i][$j] * $this->cophenetic[$i][$j];
             }
         }
-
-//        $num = $p - (($sd *  $sc) / $n);
-//        $den = sqrt(($sds - pow($sd,2)/$n) * ($scs - pow($scs,2)/$n));
-//        if ($den == 0) return 0;
-//        return $num/$den;
+        
         $x_ = $sd/$n;
         $y_ = $sc/$n;
         $s_x = sqrt(($sds/$n) - pow($x_, 2));
