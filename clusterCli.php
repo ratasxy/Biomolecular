@@ -8,7 +8,8 @@ $filename = "dist.txt";
 $utils = new Utils();
 $distances = $utils->readFile($filename);
 
-$cluster = new Cluster($distances, 2);
+$cluster = new Cluster($distances, 0);
 $ans = $cluster->run();
 
+die();
 $utils->createFileStar($filename, "distances", $ans["ds"]);

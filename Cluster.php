@@ -2,16 +2,19 @@
 
 require 'Needleman.php';
 require_once 'Utils.php';
+require_once 'Dendogram.php';
 
 class Cluster {
     private $distances;
     private $type;
     private $answer;
+    public $dendogram;
 
     public function __construct($distances, $type)
     {
         $this->distances = $distances;
         $this->type = $type;
+        $this->dendogram = new Dendogram();
     }
 
     public function run(){
@@ -29,6 +32,7 @@ class Cluster {
             $dep = $this->answer[$union["f"]] . $this->answer[$union["g"]];
             $value = $union["value"];
             $txtAns .= "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: $dep" . " valor: $value\n";
+            $this->dendogram->add($this->answer[$union["f"]], $this->answer[$union["g"]], $value);
             delete_row($this->answer, $union["f"]);
             delete_row($this->answer, $union["g"]-1);
             array_unshift($this->answer, "$dep");
@@ -203,6 +207,10 @@ class Cluster {
             case 2:
                 return ($this->distances[$f][$i] + $this->distances[$g][$i])/2;
         }
+    }
+
+    public function add($a, $b){
+
     }
 }
 
