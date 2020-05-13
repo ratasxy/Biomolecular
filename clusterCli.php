@@ -10,6 +10,11 @@ $distances = $utils->readFile($filename);
 
 $cluster = new Cluster($distances, 0);
 $ans = $cluster->run();
+$cluster->copheneticMatrix();
 
-die();
+$cop = "\n---------COPHENETIC MATRIX----------\n" . $cluster->printMatrix($cluster->cophenetic) . "\n-----------------\n";
+$cop .= "CCC: " . $cluster->calculateCCC() . "\n";
+
+$ans["ds"] .= $cop;
+echo $cop;
 $utils->createFileStar($filename, "distances", $ans["ds"]);

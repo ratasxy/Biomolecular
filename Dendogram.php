@@ -64,13 +64,11 @@ class Dendogram {
 
         while (true){
             if($this->isOnNode($current->a, $a) && $this->isOnNode($current->a, $b)) {
-                echo "entro a\n";
                 $current = $current->a;
                 continue;
             }
             if($this->isOnNode($current->b, $a) && $this->isOnNode($current->b, $b)){
                 $current = $current->b;
-                echo "entro a\n";
                 continue;
             }
             return $current->value;

@@ -9,6 +9,8 @@ class Cluster {
     private $type;
     private $answer;
     public $dendogram;
+    public $dsCopy;
+    public $cophenetic;
 
     public function __construct($distances, $type)
     {
@@ -20,6 +22,8 @@ class Cluster {
     public function run(){
         $txtDistances = "";
         $txtAns = "";
+
+        $this->dsCopy = $this->distances;
 
         $c = count($this->distances);
         for($i=0;$i<$c;$i++){
@@ -209,8 +213,63 @@ class Cluster {
         }
     }
 
-    public function add($a, $b){
+    public function copheneticMatrix(){
+        $size = count($this->dsCopy);
 
+        for($i=0;$i<$size;$i++){
+            for($j=0;$j<$size;$j++){
+                $this->cophenetic[$i][$j] = 0;
+            }
+        }
+
+        for($i=0;$i<$size;$i++){
+            for($j=$i;$j<$size;$j++){
+                if($i == $j){
+                    $this->cophenetic[$i][$j] = "-";
+                    continue;
+                }
+                $find = $this->dendogram->getUnion($this->getLetter($i), $this->getLetter($j));
+                $this->cophenetic[$i][$j] = $find;
+                $this->cophenetic[$j][$i] = $find;
+            }
+        }
+    }
+
+    public function calculateCCC(){
+        $size = count($this->dsCopy);
+        $sd = 0;
+        $sc = 0;
+        $sds = 0;
+        $scs = 0;
+        $p = 0;
+        $n = ($size * ($size-1));
+
+        for($i=0;$i<$size;$i++){
+            for($j=0;$j<$size;$j++){
+                if($i == $j)
+                    continue;
+                $sd += $this->dsCopy[$i][$j];
+                $sc += $this->cophenetic[$i][$j];
+                $sds += pow($this->dsCopy[$i][$j],2);
+                $scs += pow($this->cophenetic[$i][$j],2);
+                $p += $this->dsCopy[$i][$j] * $this->cophenetic[$i][$j];
+            }
+        }
+
+//        $num = $p - (($sd *  $sc) / $n);
+//        $den = sqrt(($sds - pow($sd,2)/$n) * ($scs - pow($scs,2)/$n));
+//        if ($den == 0) return 0;
+//        return $num/$den;
+        $x_ = $sd/$n;
+        $y_ = $sc/$n;
+        $s_x = sqrt(($sds/$n) - pow($x_, 2));
+        $s_y = sqrt(($scs/$n) - pow($y_, 2));
+        $r_xy = (($p/$n) - ($x_ * $y_))/($s_x * $s_y);
+        return $r_xy;
+    }
+
+    public function getLetter($a){
+        return chr(65 + $a);
     }
 }
 
