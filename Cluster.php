@@ -23,7 +23,7 @@ class Cluster {
             $this->answer[] = chr(65 + $i);
         }
 
-        while(count($this->distances) > 2){
+        while(count($this->distances) > 1){
             $txtDistances .= "\n------------\n" . $this->printMatrix($this->distances) . "\n------------\n";
             $union = $this->getUnionNodes();
             $dep = $this->answer[$union["f"]] . $this->answer[$union["g"]];
@@ -50,7 +50,7 @@ class Cluster {
 
         for($i=0;$i<$n;$i++){
             for($j=$i;$j<$n;$j++){
-                if($distance[$i][$j] == "-")
+                if($distance[$i][$j] == 0)
                     continue;
 
                 if($distance[$i][$j] < $min){
@@ -78,9 +78,6 @@ class Cluster {
                 $distances[$i][$j] = 0;
             }
         }
-
-        echo $this->printMatrix($distances);
-        echo "------------\n";
 
         for ($i = 0; $i < $size; $i++) {
             $answer[$i] = array();
@@ -187,12 +184,12 @@ class Cluster {
 
         for($j=1;$j<$newn;$j++){
             $i = $keys[$j-1];
-            $t = $this->calcDist($f, $g, $i);
+            $t = round($this->calcDist($f, $g, $i),2);
             $nDistances[0][$j] = $t;
             $nDistances[$j][0] = $t;
         }
 
-        $nDistances[0][0] = "-";
+        $nDistances[0][0] = 0;
 
         $this->distances = $nDistances;
     }

@@ -3,18 +3,16 @@
 require 'Utils.php';
 require 'Cluster.php';
 
-$filename = "2000";
+$filename = "tarea";
 $sequences = [
+    "CAAATGCAGGGACACCACA",
     "TTCTGGGTCACGGTGCTAGGGG",
-    "ATTTTCCCTATTCATCCAGGGAAAATGTTATGTT",
-    "TTTGTGAAGGCTTCGCAGGTACGTGAAAACCCATCCG",
-    "AATTTTTGTTGTCAAAGCAGCTTCCTAATGGAGGGTGGGGAG",
-    "TGTTGTCACTTATGCGTGCTGGGCAGGCTGAGATAGATCCGACAC",
+    "AGCAGCAATGGTGGTTTCCCTGCTTGGGAGCC"
 ];
 
 $distances = [];
 
-$cluster = new Cluster($distances, 0);
+$cluster = new Cluster($distances, 1);
 $cluster->distanceFromSequences($sequences);
 $ans = $cluster->run();
 
