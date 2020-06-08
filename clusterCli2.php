@@ -16,6 +16,10 @@ $cluster = new Cluster($distances, 1);
 $cluster->distanceFromSequences($sequences);
 $ans = $cluster->run();
 
+echo "--------------Dendograma:----------";
+var_dump($cluster->dendogram);
+echo "----------------------------------";
+
 $cluster->copheneticMatrix();
 
 $cop = "\n---------COPHENETIC MATRIX----------\n" . $cluster->printMatrix($cluster->cophenetic) . "\n-----------------\n";

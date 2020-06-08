@@ -3,7 +3,9 @@
 class NodeDendo {
     public $name;
     public $a;
+    public $avalue;
     public $b;
+    public $bvalue;
     public $value;
 
     public function __construct($name, $a, $b, $value)
@@ -30,13 +32,17 @@ class Dendogram {
         $bc = $this->obtain($b);
 
         $tmp = new NodeDendo($name, $ac, $bc, $value);
+        $tmp->avalue = $value/2;
+        $tmp->bvalue = $value/2;
 
         $this->nodes[$name] = $tmp;
 
         if(!$this->isTerminal($a))
+            $tmp->avalue = abs( ($ac->value/2)  - $value/2);
             unset($this->nodes[$a]);
 
         if(!$this->isTerminal($b))
+            $tmp->bvalue = abs( ($bc->value/2)  - $value/2);
             unset($this->nodes[$b]);
 
         $this->head = $this->nodes[$name];
