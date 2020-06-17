@@ -87,17 +87,31 @@ class Additive{
             $v2 = $current["distance"][$j][$k];
             echo "Agregando $kc\n";
 
+            $low = $oi;
+            if($v1 > $v2)
+                $low = $oj;
+
+            $ss = $this->getPath($graph, $low);
+
             //Removing direct path
-            $graph[$oi][$oj] = 0;
-            $graph[$oj][$oi] = 0;
+            $tmp = $graph[$oi][$ss];
+            $graph[$oi][$ss] = 0;
+            $graph[$ss][$oi] = 0;
 
             //Adding removed path
+            if($low == $oj)
+                $v1 = $v2 - $graph[$oj][$ss];
             $graph[$oi][$y] = $v1;
             $graph[$y][$oi] = $v1;
 
-            $graph[$oj][$y] = $v2;
-            $graph[$y][$oj] = $v2;
+            if($low == $oi)
+                $v2 = $v1 - $graph[$oi][$ss];
+            $graph[$ss][$y] = $v2;
+            $graph[$y][$ss] = $v2;
 
+            echo "----> $v1 ... $v2\n";
+
+            echo "======\n";
             //Increase Gamma
             $graph = $this->increaseGamma($graph, $current["gamma"]);
 
@@ -105,13 +119,47 @@ class Additive{
             $graph[$ok][$y] = $current["gamma"];
             $graph[$y][$ok] = $current["gamma"];
 
+
+            $ga = $current["gamma"];
+            echo "Gamma $ga\n";
+
             echo "-------BACK------\n";
             echo $this->printMatrix($graph);
             echo "*******BACK******\n";
+            echo "-------BACKGRAPH------\n";
+            echo $this->getDot($graph);
+            echo "*******BACKGRAPH******\n";
 
             $current = array_pop($this->steps);
             $y++;
         }
+    }
+
+    public function getDot($graph){
+        $n = count($graph);
+
+        $str = "digraph Result {\n";;
+        for($i=0;$i<$n;$i++){
+            for($j=$i;$j<$n;$j++){
+                if($graph[$i][$j] == 0)
+                    continue;
+
+                $ti = $i;
+                if($i<$this->initialN)
+                    $ti = chr(65 + $i);
+
+                $tj = $j;
+                if($j<$this->initialN)
+                    $ti = chr(65 + $j);
+
+                $v = $graph[$i][$j];
+
+                $str .= "$ti -> $tj " . '[ label="' . $v .'" ]' . "\n";
+            }
+        }
+        $str .= "}\n";
+
+        return $str;
     }
 
     public function increaseGamma($graph, $gamma){
@@ -119,7 +167,9 @@ class Additive{
         for($i=0;$i<$n;$i++){
             for($j=0;$j<$n;$j++){
                 if($i >= $this->initialN && $j >= $this->initialN)
+                {
                     continue;
+                }
 
                 if($graph[$i][$j] == 0)
                     continue;
@@ -129,6 +179,14 @@ class Additive{
         }
 
         return $graph;
+    }
+
+    public function getPath($graph, $s){
+        $n = count($graph);
+        for($i=0;$i<$n;$i++){
+            if($graph[$i][$s] > 0)
+                return $i;
+        }
     }
 
     public function getId($c){
