@@ -87,25 +87,36 @@ class Additive{
             $v2 = $current["distance"][$j][$k];
             echo "Agregando $kc\n";
 
+            echo "**** v1: $v1 v2: $v2\n";
             $low = $oi;
             if($v1 > $v2)
                 $low = $oj;
 
+            echo "El low es: $low\n";
             $ss = $this->getPath($graph, $low);
+            echo "El ss es: $ss\n";
 
             //Removing direct path
-            $tmp = $graph[$oi][$ss];
-            $graph[$oi][$ss] = 0;
-            $graph[$ss][$oi] = 0;
+            $tmp = $graph[$low][$ss];
+            $graph[$low][$ss] = 0;
+            $graph[$ss][$low] = 0;
 
             //Adding removed path
-            if($low == $oj)
-                $v1 = $v2 - $graph[$oj][$ss];
-            $graph[$oi][$y] = $v1;
-            $graph[$y][$oi] = $v1;
+            if($low == $oj){
+                echo "low es oj v1: $v1 v2: $v2\n";
+                $v1 = $v1 - $graph[$oi][$ss];
+                echo "v1: $v1 ---- G: " . $graph[$oi][$ss] . "\n";
+            }
 
-            if($low == $oi)
-                $v2 = $v1 - $graph[$oi][$ss];
+            $graph[$low][$y] = $v1;
+            $graph[$y][$low] = $v1;
+
+            if($low == $oi){
+                echo "low es oi v1: $v1 v2: $v2\n";
+                $v2 = $v2 - $graph[$oj][$ss];
+                echo "v2: $v2 --- G: " . $graph[$oj][$ss] . "\n";
+            }
+
             $graph[$ss][$y] = $v2;
             $graph[$y][$ss] = $v2;
 
