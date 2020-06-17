@@ -2,14 +2,18 @@
 
 require_once 'Needleman.php';
 require_once 'Utils.php';
+require_once 'Dendogram.php';
 class Neighbor {
     private $distances;
+    private $dsCopy;
     private $sumMatrix;
     private $answer;
+    public $dendogram;
 
     public function __construct($distances)
     {
         $this->distances = $distances;
+        $this->dendogram = new Dendogram();
     }
 
     public function run(){
@@ -18,6 +22,7 @@ class Neighbor {
         $txtQs = "";
         $txtAns = "";
         $u = 0;
+        $this->dsCopy = $this->distances;
 
         $c = count($this->distances);
         for($i=0;$i<$c;$i++){
@@ -32,6 +37,10 @@ class Neighbor {
             //echo "Se unen: " . $union["f"] . " con " .  $union["g"] . "\n";
             $dep = $this->answer[$union["f"]] . $this->answer[$union["g"]];
             $txtAns .= "Se unen: " . $this->answer[$union["f"]] . " con " .  $this->answer[$union["g"]] . " y forma: $dep" . "\n";
+            $value = $union["value"];
+            $this->dendogram->add($this->answer[$union["f"]], $this->answer[$union["g"]], $value);
+            #print_r($this->dendogram);
+            #echo "----------\n";
             delete_row($this->answer, $union["f"]);
             delete_row($this->answer, $union["g"]-1);
             //array_unshift($this->answer, "U$u");
@@ -39,10 +48,49 @@ class Neighbor {
             $this->getNewDistances($union["f"], $union["g"]);
             $u++;
         }
+        $fix = $this->fixFinalDendogram();
 
         $txtAns .= "El ordenamiento optimo es: " . implode("", array_reverse($this->answer)) . "\n";
         $txtDistances .= "\n---------------Resultado----------\n" . $txtAns;
         return ["ds" => $txtDistances, "qs" => $txtQs];
+    }
+
+    public function fixFinalDendogram(){
+        $node = $this->dendogram->head->b;
+        $f = 'b';
+        if($this->dendogram->isTerminal($this->dendogram->head->a)) {
+            $node = $this->dendogram->head->a;
+            $f = 'a';
+        }
+
+        $num = $this->sumfix($node);
+        $num2 = round($num / 2,2);
+
+        if($f == 'b') {
+            $this->dendogram->head->bvalue = $num2;
+            $this->dendogram->head->avalue = abs( ($this->dendogram->head->a->value / 2) - $num2);
+        } else {
+            $this->dendogram->head->avalue = $num2;
+            $this->dendogram->head->bvalue = abs ( ($this->dendogram->head->b->value / 2) - $num2);
+        }
+    }
+
+    public function sumfix($n){
+
+        $count = 0;
+        $p = count($this->dsCopy);
+        $n = ord($n) - 65;
+
+        echo "Calculo $n -- $p\n";
+
+
+        for($i=0; $i<$p; $i++){
+            if($n == $i)
+                continue;
+            $count += $this->dsCopy[$n][$i];
+        }
+
+        return (float) $count / (float) ($p-1);
     }
 
     public function distanceFromSequences($sequences){
@@ -263,7 +311,7 @@ class Neighbor {
             }
         }
 
-        return ["f" => $mi, "g" => $mj];
+        return ["f" => $mi, "g" => $mj, "value" => $min];
     }
 
     public function calculateSums($distances){
@@ -275,7 +323,14 @@ class Neighbor {
         {
             $tCols = 0;
             for($j = 0; $j<$n; $j++){
-                $tCols += $distances[$i][$j];
+                if ($i == $j)
+                    continue;
+                try {
+                    $tCols += $distances[$i][$j];
+                }
+                catch (Exception $e){
+                    echo "error: " . $distances[$i][$j] . "\n";
+                }
             }
             $sumMatrix[$i] = $tCols;
         }

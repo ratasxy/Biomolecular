@@ -4,7 +4,7 @@ require 'Needleman.php';
 require_once 'Utils.php';
 require_once 'Dendogram.php';
 
-class Cluster {
+class UPGMA {
     private $distances;
     private $type;
     private $answer;
@@ -42,8 +42,7 @@ class Cluster {
             array_unshift($this->answer, "$dep");
             $this->getNewDistances($union["f"], $union["g"]);
         }
-        #$fix = $this->fixFinalDendogram();
-        echo "Resultado del fix: $fix\n";
+
         $txtAns .= "El ordenamiento optimo es: " . implode("", array_reverse($this->answer)) . "\n";
         $txtDistances .= "\n---------------Resultado----------\n" . $txtAns;
         return ["ds" => $txtDistances];
@@ -71,45 +70,6 @@ class Cluster {
         }
 
         return ["f" => $mi, "g" => $mj, "value" => $min];
-    }
-
-    public function fixFinalDendogram(){
-        $node = $this->dendogram->head->b;
-        $f = 'b';
-        if($this->dendogram->isTerminal($this->dendogram->head->a)) {
-            $node = $this->dendogram->head->a;
-            $f = 'a';
-        }
-
-        $num = $this->sumfix($node);
-        $num2 = round($num / 2,2);
-
-        if($f == 'b') {
-            $this->dendogram->head->bvalue = $num2;
-            $this->dendogram->head->avalue = round(abs( ($this->dendogram->head->a->value / 2) - $num2),2);
-        } else {
-            $this->dendogram->head->avalue = $num2;
-            $this->dendogram->head->bvalue = round(abs ( ($this->dendogram->head->b->value / 2) - $num2), 2);
-        }
-    }
-
-    public function sumfix($n){
-
-        $count = 0;
-        $p = count($this->dsCopy);
-        $n = ord($n) - 65;
-
-        echo "Calculo $n -- $p\n";
-
-        print_r($this->dsCopy);
-
-        for($i=0; $i<$p; $i++){
-            if($n == $i)
-                continue;
-            $count += $this->dsCopy[$n][$i];
-        }
-
-        return (float) $count / (float) ($p-1);
     }
 
     public function distanceFromSequences($sequences)

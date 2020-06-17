@@ -12,7 +12,8 @@ $cluster = new Cluster($distances, 2);
 $ans = $cluster->run();
 
 echo "--------------Dendograma:----------";
-var_dump($cluster->dendogram);
+#var_dump($cluster->dendogram);
+$cluster->dendogram->toDot();
 echo "----------------------------------";
 
 $cluster->copheneticMatrix();

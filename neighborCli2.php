@@ -26,6 +26,11 @@ $neighbor->distanceFromSequences($sequences);
 
 $ans = $neighbor->run();
 
+echo "--------------Dendograma:----------";
+var_dump($neighbor->dendogram);
+$neighbor->dendogram->toDot();
+echo "----------------------------------";
+
 $utils = new Utils();
 
 $utils->createFileStar($filename, "distances", $ans["ds"]);

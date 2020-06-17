@@ -27,13 +27,14 @@ class Dendogram {
     }
 
     public function add($a, $b, $value){
+        echo "Uniendo $a con $b y valor $value\n";
         $name = $a . $b;
         $ac = $this->obtain($a);
         $bc = $this->obtain($b);
 
         $tmp = new NodeDendo($name, $ac, $bc, $value);
-        $tmp->avalue = $value/2;
-        $tmp->bvalue = $value/2;
+        $tmp->avalue = round($value/2,2);
+        $tmp->bvalue = round($value/2, 2);
 
         $this->nodes[$name] = $tmp;
 
@@ -86,5 +87,47 @@ class Dendogram {
             return true;
 
         return false;
+    }
+
+
+    public function toDot(){
+        echo "**************************\n";
+        $ans =  "digraph Result {\n";
+        $ans .= $this->toDoI($this->head);
+        $ans .= "}\n";
+
+        echo $ans;
+        return $ans;
+    }
+
+    public function toDoI($n){
+
+        $t = "";
+
+        if(!is_object($n))
+            return "";
+
+        $t .= $n->name . " -> ";
+
+        if(!is_object($n->a))
+            $t .= $n->a;
+        else
+            $t .= $n->a->name;
+        $v = $n->avalue;
+        $t .= " [ label=\"$v\" ]\n";
+
+
+        $t .= $n->name . " -> ";
+        if(!is_object($n->b))
+            $t .= $n->b;
+        else
+            $t .= $n->b->name;
+        $v = $n->bvalue;
+        $t .= " [ label=\"$v\" ]\n";
+
+        $t .= $this->toDoI($n->a);
+        $t .= $this->toDoI($n->b);
+
+        return $t;
     }
 }
